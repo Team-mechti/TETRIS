@@ -1,0 +1,95 @@
+import pygame
+import sys
+import random
+
+black = (0, 0, 0)
+white = (255, 255, 255)
+blue = (0, 0, 255)
+red = (255, 0, 0)
+yellow = (255, 255, 0)
+green = (0, 255, 0)
+purple = (0, 255, 255)
+
+x = random.randint(20, 380)
+y = 0
+w = 50
+h = 100
+all_blocks = []
+score = 0
+
+# я пыталась добавить больший функционал, но все сломалось и я всё откатила, сижу теперь грустная, очень грустная...
+
+def collided(block, all_blocks):
+    for i in range(len(all_blocks)):
+        if block.colliderect(all_blocks[i]):
+            return True
+    return False
+
+
+clock = pygame.time.Clock()
+
+pygame.init()
+
+screen = pygame.display.set_mode([400, 700])
+
+
+screen.fill(white)
+pygame.display.update()
+
+floor = pygame.draw.rect(screen, black, [0, 700, 700, 1], 0)
+all_blocks.insert(0, floor)
+
+
+color = red
+gameover = False
+
+while gameover == False:
+    pygame.draw.rect(screen, white, [x, y, w, h], 0)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                x = x - 20
+            if event.key == pygame.K_RIGHT:
+                x = x + 20
+            if event.key == pygame.K_SPACE:
+                pygame.draw.rect(screen, white, [x, y, w, h], 0)
+                temp = h
+                h = w
+                w = temp
+    y = y + 3
+    if x < 0:
+        x = 0
+    if x + w > 400:
+        x = 400 - w
+    block = pygame.draw.rect(screen, color, [x, y, w, h], 0)
+    if collided(block, all_blocks):
+        if y < 10:
+            gameover = True
+        y = 0
+        x = random.randint(20, 380)
+        w = random.randint(50, 100)
+        h = random.randint(50, 100)
+        all_blocks.insert(0, block)
+        list = (0, 1, 2, 3, 4)
+        randomnum = random.randint(list[0], list[-1])
+        if randomnum == 0:
+            color = yellow
+        if randomnum == 1:
+            color = red
+        if randomnum == 2:
+            color = blue
+        if randomnum == 3:
+            color = green
+        if randomnum == 4:
+            color = purple
+
+        score = score + 1
+        print("score = " + str(score))
+    pygame.display.update()
+    clock.tick(100)
+
+print("Вы проиграли(")
